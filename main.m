@@ -56,6 +56,8 @@ static void TestArrayMethods(void)
     TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 1; }] isEqual: ARRAY()]);
     TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 3; }] isEqual: ARRAY(@"1", @"2")]);
     TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: array]);
+    TEST_ASSERT([[array ma_match: ^BOOL (id obj) { return [obj intValue] > 1; }] isEqual: @"2"]);
+    TEST_ASSERT([array ma_match: ^BOOL (id obj) { return [obj intValue] < 1; }] == nil);
 }
 
 static void TestArrayMacros(void)
@@ -73,6 +75,9 @@ static void TestArrayMacros(void)
     TEST_ASSERT([REJECT(array, [obj intValue] >= 3) isEqual: ARRAY(@"1", @"2")]);
     TEST_ASSERT([REJECT(array, [obj intValue] < 1) isEqual: array]);
     TEST_ASSERT([REJECT(array, !obj) isEqual: array]);
+    
+    TEST_ASSERT([MATCH(array, [obj intValue] > 1) isEqual: @"2"]);
+    TEST_ASSERT(MATCH(array, [obj intValue] < 1) == nil);
 }
 
 static void TestEach(void)

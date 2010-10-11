@@ -28,4 +28,12 @@
     return array;
 }
 
+- (id)ma_match: (BOOL (^)(id obj))block
+{
+    for(id obj in self)
+        if(block(obj))
+            return obj;
+    return nil;
+}
+
 @end

@@ -18,6 +18,7 @@
 #define MAP(collection, ...) EACH_WRAPPER([collection ma_map: ^id (id obj) { return (__VA_ARGS__); }])
 #define SELECT(collection, ...) EACH_WRAPPER([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__) != 0; }])
 #define REJECT(collection, ...) EACH_WRAPPER([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__) == 0; }])
+#define MATCH(collection, ...) EACH_WRAPPER([collection ma_match: ^BOOL (id obj) { return (__VA_ARGS__) != 0; }])
 
 #define EACH(array) MAEachHelper(array, &MA_eachTable)
 
@@ -25,6 +26,7 @@
 
 - (NSArray *)ma_map: (id (^)(id obj))block;
 - (NSArray *)ma_select: (BOOL (^)(id obj))block;
+- (id)ma_match: (BOOL (^)(id obj))block;
 
 @end
 
