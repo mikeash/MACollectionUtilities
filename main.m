@@ -68,6 +68,11 @@ static void TestArrayMacros(void)
     TEST_ASSERT([SELECT(array, [obj intValue] < 3) isEqual: ARRAY(@"1", @"2")]);
     TEST_ASSERT([SELECT(array, [obj intValue] < 4) isEqual: array]);
     TEST_ASSERT([SELECT(array, obj) isEqual: array]);
+    
+    TEST_ASSERT([REJECT(array, [obj intValue] >= 1) isEqual: ARRAY()]);
+    TEST_ASSERT([REJECT(array, [obj intValue] >= 3) isEqual: ARRAY(@"1", @"2")]);
+    TEST_ASSERT([REJECT(array, [obj intValue] < 1) isEqual: array]);
+    TEST_ASSERT([REJECT(array, !obj) isEqual: array]);
 }
 
 static void TestEach(void)
