@@ -37,3 +37,32 @@
 }
 
 @end
+
+@implementation NSSet (MACollectionUtilities)
+
+- (NSSet *)ma_map: (id (^)(id obj))block
+{
+    NSMutableSet *set = [NSMutableSet setWithCapacity: [self count]];
+    for(id obj in self)
+        [set addObject: block(obj)];
+    return set;
+}
+
+- (NSSet *)ma_select: (BOOL (^)(id obj))block
+{
+    NSMutableSet *set = [NSMutableSet set];
+    for(id obj in self)
+        if(block(obj))
+            [set addObject: obj];
+    return set;
+}
+
+- (id)ma_match: (BOOL (^)(id obj))block
+{
+    for(id obj in self)
+        if(block(obj))
+            return obj;
+    return nil;
+}
+
+@end

@@ -92,6 +92,39 @@ static void TestEach(void)
     TEST_ASSERT([filtered isEqual: ARRAY(@"1", @"2")]);
 }
 
+static void TestSetMethods(void)
+{
+    NSSet *set = SET(@"1", @"2", @"3");
+    
+    TEST_ASSERT([[set ma_map: ^(id obj) { return [obj stringByAppendingString: @".0"]; }] isEqual: 
+                 SET(@"1.0", @"2.0", @"3.0")]);
+    TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 1; }] isEqual: SET()]);
+    TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 3; }] isEqual: SET(@"1", @"2")]);
+    TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: set]);
+    TEST_ASSERT([SET(@"2", @"3") containsObject: [set ma_match: ^BOOL (id obj) { return [obj intValue] > 1; }]]);
+    TEST_ASSERT([set ma_match: ^BOOL (id obj) { return [obj intValue] < 1; }] == nil);
+}
+
+static void TestSetMacros(void)
+{
+    NSSet *set = SET(@"1", @"2", @"3");
+    
+    TEST_ASSERT([MAP(set, [obj stringByAppendingString: @".0"]) isEqual: 
+                 SET(@"1.0", @"2.0", @"3.0")]);
+    TEST_ASSERT([SELECT(set, [obj intValue] < 1) isEqual: SET()]);
+    TEST_ASSERT([SELECT(set, [obj intValue] < 3) isEqual: SET(@"1", @"2")]);
+    TEST_ASSERT([SELECT(set, [obj intValue] < 4) isEqual: set]);
+    TEST_ASSERT([SELECT(set, obj) isEqual: set]);
+    
+    TEST_ASSERT([REJECT(set, [obj intValue] >= 1) isEqual: SET()]);
+    TEST_ASSERT([REJECT(set, [obj intValue] >= 3) isEqual: SET(@"1", @"2")]);
+    TEST_ASSERT([REJECT(set, [obj intValue] < 1) isEqual: set]);
+    TEST_ASSERT([REJECT(set, !obj) isEqual: set]);
+    
+    TEST_ASSERT([SET(@"2", @"3") containsObject: MATCH(set, [obj intValue] > 1)]);
+    TEST_ASSERT(MATCH(set, [obj intValue] < 1) == nil);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
@@ -99,6 +132,8 @@ int main(int argc, char **argv)
         TEST(TestArrayMethods);
         TEST(TestArrayMacros);
         TEST(TestEach);
+        TEST(TestSetMethods);
+        TEST(TestSetMacros);
         
         NSString *message;
         if(gFailureCount)

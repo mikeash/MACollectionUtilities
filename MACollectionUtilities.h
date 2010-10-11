@@ -30,6 +30,14 @@
 
 @end
 
+@interface NSSet (MACollectionUtilities)
+
+- (NSSet *)ma_map: (id (^)(id obj))block;
+- (NSSet *)ma_select: (BOOL (^)(id obj))block;
+- (id)ma_match: (BOOL (^)(id obj))block;
+
+@end
+
 
 // ===========================================================================
 // internal utility whatnot that needs to be externally visible for the macros
