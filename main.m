@@ -69,12 +69,25 @@ static void TestArrayMacros(void)
     TEST_ASSERT([SELECT(array, [obj intValue] < 4) isEqual: array]);
 }
 
+static void TestEach(void)
+{
+    NSArray *array1 = ARRAY(@"1", @"2", @"3");
+    NSArray *array2 = ARRAY(@"4", @"5", @"6");
+    
+    NSArray *together = MAP(array1, [obj stringByAppendingString: EACH(array2)]);
+    TEST_ASSERT([together isEqual: ARRAY(@"14", @"25", @"36")]);
+    
+    NSArray *filtered = SELECT(array1, [obj intValue] * 2 < [EACH(array2) intValue]);
+    TEST_ASSERT([filtered isEqual: ARRAY(@"1", @"2")]);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
         TEST(TestCreation);
         TEST(TestArrayMethods);
         TEST(TestArrayMacros);
+        TEST(TestEach);
         
         NSString *message;
         if(gFailureCount)

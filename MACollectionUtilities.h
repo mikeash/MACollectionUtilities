@@ -15,8 +15,10 @@
 // this is key/object order, not object/key order, thus all the fuss
 #define DICT(...) MADictionaryWithKeysAndObjects(IDARRAY(__VA_ARGS__), IDCOUNT(__VA_ARGS__) / 2)
 
-#define MAP(collection, ...) ([collection ma_map: ^id (id obj) { return (__VA_ARGS__); }])
-#define SELECT(collection, ...) ([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__); }])
+#define MAP(collection, ...) EACH_WRAPPER([collection ma_map: ^id (id obj) { return (__VA_ARGS__); }])
+#define SELECT(collection, ...) EACH_WRAPPER([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__); }])
+
+#define EACH(array) MAEachHelper(array, &MA_eachTable)
 
 @interface NSArray (MACollectionUtilities)
 
@@ -30,6 +32,8 @@
 // internal utility whatnot that needs to be externally visible for the macros
 #define IDARRAY(...) ((id[]){ __VA_ARGS__ })
 #define IDCOUNT(...) (sizeof(IDARRAY(__VA_ARGS__)) / sizeof(id))
+#define EACH_WRAPPER(...) (^{ __block NSMapTable *MA_eachTable = nil; (void)MA_eachTable; return __VA_ARGS__; }())
+
 static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUInteger count)
 {
     id keys[count];
@@ -41,4 +45,17 @@ static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUI
     }
     
     return [NSDictionary dictionaryWithObjects: objs forKeys: keys count: count];
+}
+
+static inline id MAEachHelper(NSArray *array, NSMapTable **eachTablePtr)
+{
+    if(!*eachTablePtr)
+        *eachTablePtr = [NSMapTable mapTableWithStrongToStrongObjects];
+    NSEnumerator *enumerator = [*eachTablePtr objectForKey: array];
+    if(!enumerator)
+    {
+        enumerator = [array objectEnumerator];
+        [*eachTablePtr setObject: enumerator forKey: array];
+    }
+    return [enumerator nextObject];
 }
