@@ -83,3 +83,5 @@ You can use multiple arrays with multiple `EACH` macros to enumerate several col
                                              withObject: EACH(secondArguments)];
 
 The `EACH` macro works by creating and tracking an `NSEnumerator` internally. It lazily creates the enumerator on the first use, and then uses `nextObject` at each call. Thus if your arrays are not the same length, it will begin to return `nil`, watch out.
+
+Because they are unordered, parallel enumeration doesn't make sense for `NSSet` and `EACH` is not supported for them.
