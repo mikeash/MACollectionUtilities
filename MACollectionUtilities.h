@@ -15,6 +15,8 @@
 // this is key/object order, not object/key order, thus all the fuss
 #define DICT(...) MADictionaryWithKeysAndObjects(IDARRAY(__VA_ARGS__), IDCOUNT(__VA_ARGS__) / 2)
 
+#define MAP(collection, ...) ([collection ma_map: ^id (id obj) { return (__VA_ARGS__); }])
+#define SELECT(collection, ...) ([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__); }])
 
 @interface NSArray (MACollectionUtilities)
 

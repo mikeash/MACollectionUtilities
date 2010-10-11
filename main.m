@@ -58,11 +58,23 @@ static void TestArrayMethods(void)
     TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: array]);
 }
 
+static void TestArrayMacros(void)
+{
+    NSArray *array = ARRAY(@"1", @"2", @"3");
+    
+    TEST_ASSERT([MAP(array, [obj stringByAppendingString: @".0"]) isEqual: 
+                 ARRAY(@"1.0", @"2.0", @"3.0")]);
+    TEST_ASSERT([SELECT(array, [obj intValue] < 1) isEqual: ARRAY()]);
+    TEST_ASSERT([SELECT(array, [obj intValue] < 3) isEqual: ARRAY(@"1", @"2")]);
+    TEST_ASSERT([SELECT(array, [obj intValue] < 4) isEqual: array]);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
         TEST(TestCreation);
         TEST(TestArrayMethods);
+        TEST(TestArrayMacros);
         
         NSString *message;
         if(gFailureCount)
