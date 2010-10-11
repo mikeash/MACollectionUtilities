@@ -47,10 +47,22 @@ static void TestCreation(void)
     TEST_ASSERT([SET(@"a", @"b", @"c", @"d") isEqual: ([NSSet setWithObjects: @"a", @"b", @"c", @"d", nil])]);
 }
 
+static void TestArrayMethods(void)
+{
+    NSArray *array = ARRAY(@"1", @"2", @"3");
+    
+    TEST_ASSERT([[array ma_map: ^(id obj) { return [obj stringByAppendingString: @".0"]; }] isEqual: 
+                 ARRAY(@"1.0", @"2.0", @"3.0")]);
+    TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 1; }] isEqual: ARRAY()]);
+    TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 3; }] isEqual: ARRAY(@"1", @"2")]);
+    TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: array]);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
         TEST(TestCreation);
+        TEST(TestArrayMethods);
         
         NSString *message;
         if(gFailureCount)

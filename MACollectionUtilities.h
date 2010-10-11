@@ -16,6 +16,13 @@
 #define DICT(...) MADictionaryWithKeysAndObjects(IDARRAY(__VA_ARGS__), IDCOUNT(__VA_ARGS__) / 2)
 
 
+@interface NSArray (MACollectionUtilities)
+
+- (NSArray *)ma_map: (id (^)(id obj))block;
+- (NSArray *)ma_select: (BOOL (^)(id obj))block;
+
+@end
+
 
 // ===========================================================================
 // internal utility whatnot that needs to be externally visible for the macros
