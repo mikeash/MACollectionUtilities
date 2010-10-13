@@ -125,6 +125,16 @@ static void TestSetMacros(void)
     TEST_ASSERT(MATCH(set, [obj intValue] < 1) == nil);
 }
 
+static void TestReduce(void)
+{
+    NSArray *array = ARRAY(@"hel", @"lo ", @"wor", @"ld");
+    NSString *result = [array ma_reduce: @"" block: ^(id a, id b) { return [a stringByAppendingString: b]; }];
+    TEST_ASSERT([result isEqualToString: @"hello world"]);
+    
+    result = REDUCE(array, @"", [a stringByAppendingString: b]);
+    TEST_ASSERT([result isEqualToString: @"hello world"]);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
@@ -134,6 +144,7 @@ int main(int argc, char **argv)
         TEST(TestEach);
         TEST(TestSetMethods);
         TEST(TestSetMacros);
+        TEST(TestReduce);
         
         NSString *message;
         if(gFailureCount)

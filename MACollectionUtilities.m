@@ -36,6 +36,14 @@
     return nil;
 }
 
+- (id)ma_reduce: (id)initial block: (id (^)(id a, id b))block
+{
+    id a = initial;
+    for(id b in self)
+        a = block(a, b);
+    return a;
+}
+
 @end
 
 @implementation NSSet (MACollectionUtilities)
