@@ -26,15 +26,17 @@ Methods are provided on `NSArray` and `NSSet` to do mapping, filtering, and matc
 * `ma_map:` - Call the block once for each object in the collection, and use the return values to create a new collection. Note that block *must not* return `nil`.
 * `ma_select:` - Call the block once for each object in the collection. Use the objects where the block returns `YES` to create a new collection.
 * `ma_match:` - Search for an object in the collection for which the block returns `YES` and return it.
+* `ma_reduce:block:` - Start an accumulated value with the first argument. Call the block on each element of the array, passing it that element and the accumulated value so far. Set the accumulated value to the result. Allows an arbitrary "summation" operation to be performed on an array.
 
 
 Helper macros
 -------------
 
-To simplify the use of the above methods, helper macros are provided. These macros take a collection as their first parameter and an expression as their second. The expression is used to create a block which is passed to the appropriate method. The parameter `obj` is implicitly created by the macros and can be used in the expression to refer to the individual objects.
+To simplify the use of the above methods, helper macros are provided. These macros take a collection as their first parameter and an expression as their second. The expression is used to create a block which is passed to the appropriate method. The parameter `obj` is implicitly created by most macros and can be used in the expression to refer to the individual objects.
 
 * The `MAP`, `SELECT`, and `MATCH` macros all correspond to the methods of the same names.
 * The `REJECT` macro is equivalent to a `SELECT` except that it selects objects for which the expression is *false*.
+* The `REDUCE` macro takes three arguments: the collection, the initial value, and the expression to use for reduction. This macro implicitly creates parameters `a` (the accumulated value) and `b` (the object from the array).
 
 
 Examples
@@ -62,6 +64,15 @@ Find image files:
 Find the first string that starts with an asterisk:
 
     NSString *asteriskString = MATCH(stringArray, [obj hasPrefix: @"*"]);
+
+Concatenate all of the strings in an array:
+
+    NSString *concatenated = REDUCE(stringArray, @"", [a stringByAppendingString: b]);
+
+Sum all of the lengths of the strings in an array:
+
+    NSNumber *sumObj = REDUCE(stringArray, nil, [NSNumber numberWithInteger: [a integerValue] + [b length]]);
+    NSUInteger sum = [sumObj integerValue];
 
 
 Parallel Enumeration
