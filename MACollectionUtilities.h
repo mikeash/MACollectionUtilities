@@ -45,7 +45,13 @@
 // internal utility whatnot that needs to be externally visible for the macros
 #define IDARRAY(...) ((id[]){ __VA_ARGS__ })
 #define IDCOUNT(...) (sizeof(IDARRAY(__VA_ARGS__)) / sizeof(id))
-#define EACH_WRAPPER(...) (^{ __block NSMapTable *MA_eachTable = nil; (void)MA_eachTable; return __VA_ARGS__; }())
+#define EACH_WRAPPER(...) (^{ __block CFMutableDictionaryRef MA_eachTable = nil; \
+        (void)MA_eachTable; \
+        __typeof__(__VA_ARGS__) MA_retval = __VA_ARGS__; \
+        if(MA_eachTable) \
+            CFRelease(MA_eachTable); \
+        return MA_retval; \
+    }())
 
 static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUInteger count)
 {
@@ -60,15 +66,26 @@ static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUI
     return [NSDictionary dictionaryWithObjects: objs forKeys: keys count: count];
 }
 
-static inline id MAEachHelper(NSArray *array, NSMapTable **eachTablePtr)
+static inline id MAEachHelper(NSArray *array, CFMutableDictionaryRef *eachTablePtr)
 {
     if(!*eachTablePtr)
-        *eachTablePtr = [NSMapTable mapTableWithStrongToStrongObjects];
-    NSEnumerator *enumerator = [*eachTablePtr objectForKey: array];
+    {
+        CFDictionaryKeyCallBacks keycb = {
+            0,
+            kCFTypeDictionaryKeyCallBacks.retain,
+            kCFTypeDictionaryKeyCallBacks.release,
+            kCFTypeDictionaryKeyCallBacks.copyDescription,
+            NULL,
+            NULL
+        };
+        *eachTablePtr = CFDictionaryCreateMutable(NULL, 0, &keycb, &kCFTypeDictionaryValueCallBacks);
+    }
+    
+    NSEnumerator *enumerator = (id)CFDictionaryGetValue(*eachTablePtr, array);
     if(!enumerator)
     {
         enumerator = [array objectEnumerator];
-        [*eachTablePtr setObject: enumerator forKey: array];
+        CFDictionarySetValue(*eachTablePtr, array, enumerator);
     }
     return [enumerator nextObject];
 }
