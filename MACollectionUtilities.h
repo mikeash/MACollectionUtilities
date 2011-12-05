@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+// make sure non-Clang compilers can still compile
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+
+// no ARC ? -> declare the ARC attributes we use to be a no-op, so the compiler won't whine
+#if ! __has_feature( objc_arc )
+#define __autoreleasing
+#define __bridge
+#endif
+
 
 #define ARRAY(...) ([NSArray arrayWithObjects: IDARRAY(__VA_ARGS__) count: IDCOUNT(__VA_ARGS__)])
 #define SET(...) ([NSSet setWithObjects: IDARRAY(__VA_ARGS__) count: IDCOUNT(__VA_ARGS__)])
@@ -43,7 +54,7 @@
 
 // ===========================================================================
 // internal utility whatnot that needs to be externally visible for the macros
-#define IDARRAY(...) ((id[]){ __VA_ARGS__ })
+#define IDARRAY(...) ((__autoreleasing id[]){ __VA_ARGS__ })
 #define IDCOUNT(...) (sizeof(IDARRAY(__VA_ARGS__)) / sizeof(id))
 #define EACH_WRAPPER(...) (^{ __block CFMutableDictionaryRef MA_eachTable = nil; \
         (void)MA_eachTable; \
@@ -81,11 +92,11 @@ static inline id MAEachHelper(NSArray *array, CFMutableDictionaryRef *eachTableP
         *eachTablePtr = CFDictionaryCreateMutable(NULL, 0, &keycb, &kCFTypeDictionaryValueCallBacks);
     }
     
-    NSEnumerator *enumerator = (id)CFDictionaryGetValue(*eachTablePtr, array);
+    NSEnumerator *enumerator = (__bridge id)CFDictionaryGetValue(*eachTablePtr, (__bridge CFArrayRef)array);
     if(!enumerator)
     {
         enumerator = [array objectEnumerator];
-        CFDictionarySetValue(*eachTablePtr, array, enumerator);
+        CFDictionarySetValue(*eachTablePtr, (__bridge CFArrayRef)array, (__bridge void *)enumerator);
     }
     return [enumerator nextObject];
 }
