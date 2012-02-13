@@ -27,6 +27,7 @@ Methods are provided on `NSArray` and `NSSet` to do mapping, filtering, and matc
 * `ma_select:` - Call the block once for each object in the collection. Use the objects where the block returns `YES` to create a new collection.
 * `ma_match:` - Search for an object in the collection for which the block returns `YES` and return it.
 * `ma_reduce:block:` - Start an accumulated value with the first argument. Call the block on each element of the array, passing it that element and the accumulated value so far. Set the accumulated value to the result. Allows an arbitrary "summation" operation to be performed on an array.
+* `ma_sorted:` - Use the block as a comparator to sort the array. Unlike the built-in Cocoa methods, the comparator returns a single `BOOL`, indicating whether the two objects should be sorted in ascending order. Note that this is different from the normal Cocoa technique of returning ascending, descending, or equal. Due to this difference, the comparator will be called somewhat more often than with the standard Cocoa methods, since it sometimes needs to be called twice to fully detect the ordering of a pair of objects.
 
 
 Helper macros
@@ -37,6 +38,7 @@ To simplify the use of the above methods, helper macros are provided. These macr
 * The `MAP`, `SELECT`, and `MATCH` macros all correspond to the methods of the same names.
 * The `REJECT` macro is equivalent to a `SELECT` except that it selects objects for which the expression is *false*.
 * The `REDUCE` macro takes three arguments: the collection, the initial value, and the expression to use for reduction. This macro implicitly creates parameters `a` (the accumulated value) and `b` (the object from the array).
+* The `SORTED` macro implicitly creates parameters `a` and `b`, and the second parameter should be an expression which evaluates to true if `a` should be sorted before `b`.
 
 
 Examples
@@ -73,6 +75,10 @@ Sum all of the lengths of the strings in an array:
 
     NSNumber *sumObj = REDUCE(stringArray, nil, [NSNumber numberWithInteger: [a integerValue] + [b length]]);
     NSUInteger sum = [sumObj integerValue];
+
+Sort an array of strings ascending in order of string length:
+
+    NSArray *orderedArray = SORTED(array, [a length] < [b length]);
 
 
 Parallel Enumeration

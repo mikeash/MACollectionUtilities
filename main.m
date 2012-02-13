@@ -135,6 +135,17 @@ static void TestReduce(void)
     TEST_ASSERT([result isEqualToString: @"hello world"]);
 }
 
+static void TestSorting(void)
+{
+    NSArray *array = ARRAY(@"one", @"three", @"four", @"eleven", @"seventeen");
+    NSArray *result = SORTED(array, [a length] > [b length]);
+    TEST_ASSERT([result isEqual: ARRAY(@"seventeen", @"eleven", @"three", @"four", @"one")]);
+    
+    NSSet *set = SET(@"one", @"three", @"four", @"eleven", @"seventeen");
+    result = SORTED(set, [a length] > [b length]);
+    TEST_ASSERT([result isEqual: ARRAY(@"seventeen", @"eleven", @"three", @"four", @"one")]);
+}
+
 int main(int argc, char **argv)
 {
     WithPool(^{
@@ -145,6 +156,7 @@ int main(int argc, char **argv)
         TEST(TestSetMethods);
         TEST(TestSetMacros);
         TEST(TestReduce);
+        TEST(TestSorting);
         
         NSString *message;
         if(gFailureCount)

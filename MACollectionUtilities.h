@@ -34,12 +34,16 @@
 
 #define EACH(array) MAEachHelper(array, &MA_eachTable)
 
+#define SORTED(collection, ...) [collection ma_sorted: ^BOOL (id a, id b) { return (__VA_ARGS__) != 0; }]
+
 @interface NSArray (MACollectionUtilities)
 
 - (NSArray *)ma_map: (id (^)(id obj))block;
 - (NSArray *)ma_select: (BOOL (^)(id obj))block;
 - (id)ma_match: (BOOL (^)(id obj))block;
 - (id)ma_reduce: (id)initial block: (id (^)(id a, id b))block;
+
+- (NSArray *)ma_sorted: (BOOL (^)(id a, id b))lessThan;
 
 @end
 
@@ -48,6 +52,8 @@
 - (NSSet *)ma_map: (id (^)(id obj))block;
 - (NSSet *)ma_select: (BOOL (^)(id obj))block;
 - (id)ma_match: (BOOL (^)(id obj))block;
+
+- (NSArray *)ma_sorted: (BOOL (^)(id a, id b))lessThan;
 
 @end
 

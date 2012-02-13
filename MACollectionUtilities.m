@@ -44,6 +44,18 @@
     return a;
 }
 
+- (NSArray *)ma_sorted: (BOOL (^)(id a, id b))lessThan
+{
+    return [self sortedArrayUsingComparator: ^NSComparisonResult(id a, id b) {
+        if(lessThan(a, b))
+            return NSOrderedAscending;
+        else if(lessThan(b, a))
+            return NSOrderedDescending;
+        else
+            return NSOrderedSame;
+    }];
+}
+
 @end
 
 @implementation NSSet (MACollectionUtilities)
@@ -71,6 +83,11 @@
         if(block(obj))
             return obj;
     return nil;
+}
+
+- (NSArray *)ma_sorted: (BOOL (^)(id a, id b))lessThan
+{
+    return [[self allObjects] ma_sorted: lessThan];
 }
 
 @end
