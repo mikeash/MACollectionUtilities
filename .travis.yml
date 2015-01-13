@@ -1,3 +1,2 @@
 language: objective-c
-xcode_project: MACollectionUtilities.xcodeproj
-xcode_scheme: MACollectionUtilities
+script: "./run-tests.sh"
