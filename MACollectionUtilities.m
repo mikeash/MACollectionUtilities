@@ -56,6 +56,12 @@
     }];
 }
 
+- (void)ma_do: (void (^)(id obj))block
+{
+	for(id obj in self)
+		block(obj);
+}
+
 @end
 
 @implementation NSSet (MACollectionUtilities)
@@ -88,6 +94,12 @@
 - (NSArray *)ma_sorted: (BOOL (^)(id a, id b))lessThan
 {
     return [[self allObjects] ma_sorted: lessThan];
+}
+
+- (void)ma_do: (void (^)(id obj))block
+{
+	for(id obj in self)
+		block(obj);
 }
 
 @end
