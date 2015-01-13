@@ -103,7 +103,8 @@ static void TestEach(void)
 static void TestSetMethods(void)
 {
     NSSet *set = SET(@"1", @"2", @"3");
-    
+	__block NSInteger sum = 0;
+
     TEST_ASSERT([[set ma_map: ^(id obj) { return [obj stringByAppendingString: @".0"]; }] isEqual: 
                  SET(@"1.0", @"2.0", @"3.0")]);
     TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 1; }] isEqual: SET()]);
@@ -111,11 +112,15 @@ static void TestSetMethods(void)
     TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: set]);
     TEST_ASSERT([SET(@"2", @"3") containsObject: [set ma_match: ^BOOL (id obj) { return [obj intValue] > 1; }]]);
     TEST_ASSERT([set ma_match: ^BOOL (id obj) { return [obj intValue] < 1; }] == nil);
+	
+	[set ma_do: ^void (id obj) { sum += [obj integerValue]; }];
+	TEST_ASSERT(sum == 6);
 }
 
 static void TestSetMacros(void)
 {
     NSSet *set = SET(@"1", @"2", @"3");
+	__block NSInteger sum = 0;
     
     TEST_ASSERT([MAP(set, [obj stringByAppendingString: @".0"]) isEqual: 
                  SET(@"1.0", @"2.0", @"3.0")]);
@@ -131,6 +136,9 @@ static void TestSetMacros(void)
     
     TEST_ASSERT([SET(@"2", @"3") containsObject: MATCH(set, [obj intValue] > 1)]);
     TEST_ASSERT(MATCH(set, [obj intValue] < 1) == nil);
+	
+	DO(set, sum += [obj integerValue]);
+	TEST_ASSERT (sum == 6);
 }
 
 static void TestReduce(void)
