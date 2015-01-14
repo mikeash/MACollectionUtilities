@@ -92,12 +92,16 @@ static void TestEach(void)
 {
     NSArray *array1 = ARRAY(@"1", @"2", @"3");
     NSArray *array2 = ARRAY(@"4", @"5", @"6");
+	__block NSInteger sum = 0;
     
     NSArray *together = MAP(array1, [obj stringByAppendingString: EACH(array2)]);
     TEST_ASSERT([together isEqual: ARRAY(@"14", @"25", @"36")]);
     
     NSArray *filtered = SELECT(array1, [obj intValue] * 2 < [EACH(array2) intValue]);
     TEST_ASSERT([filtered isEqual: ARRAY(@"1", @"2")]);
+	
+	DO (array1, sum += [[obj stringByAppendingString: EACH(array2)] integerValue]);
+	TEST_ASSERT (sum == 75);
 }
 
 static void TestSetMethods(void)
@@ -175,11 +179,16 @@ int main(int argc, char **argv)
         TEST(TestSorting);
         
         NSString *message;
+		
         if(gFailureCount)
+		{
             message = [NSString stringWithFormat: @"FAILED: %d total assertion failure%s", gFailureCount, gFailureCount > 1 ? "s" : ""];
+		}
         else
+		{
             message = @"SUCCESS";
+		}
         NSLog(@"Tests complete: %@", message);
     });
-    return 0;
+    return gFailureCount != 0;
 }

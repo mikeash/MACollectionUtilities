@@ -31,7 +31,7 @@
 #define REJECT(collection, ...) EACH_WRAPPER([collection ma_select: ^BOOL (id obj) { return (__VA_ARGS__) == 0; }])
 #define MATCH(collection, ...) EACH_WRAPPER([collection ma_match: ^BOOL (id obj) { return (__VA_ARGS__) != 0; }])
 #define REDUCE(collection, initial, ...) EACH_WRAPPER([collection ma_reduce: (initial) block: ^id (id a, id b) { return (__VA_ARGS__); }])
-#define DO(collection, ...) ([collection ma_do: ^void (id obj) { __VA_ARGS__; }])
+#define DO(collection, ...) EACH_WRAPPER_NORETURN([collection ma_do: ^void (id obj) { __VA_ARGS__;}])
 
 
 #define EACH(array) MAEachHelper(array, &MA_eachTable)
@@ -73,6 +73,13 @@
             CFRelease(MA_eachTable); \
         return MA_retval; \
     }())
+
+#define EACH_WRAPPER_NORETURN(...) (^{ __block CFMutableDictionaryRef MA_eachTable = nil; \
+		(void)MA_eachTable; \
+		__VA_ARGS__; \
+		if(MA_eachTable) \
+			CFRelease(MA_eachTable); \
+	}())
 
 static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUInteger count)
 {
