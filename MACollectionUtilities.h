@@ -75,11 +75,11 @@
     }())
 
 #define EACH_WRAPPER_NORETURN(...) (^{ __block CFMutableDictionaryRef MA_eachTable = nil; \
-		(void)MA_eachTable; \
-		__VA_ARGS__; \
-		if(MA_eachTable) \
-			CFRelease(MA_eachTable); \
-	}())
+        (void)MA_eachTable; \
+        __VA_ARGS__; \
+        if(MA_eachTable) \
+            CFRelease(MA_eachTable); \
+    }())
 
 static inline NSDictionary *MADictionaryWithKeysAndObjects(id *keysAndObjs, NSUInteger count)
 {
