@@ -50,7 +50,7 @@ static void TestCreation(void)
 static void TestArrayMethods(void)
 {
     NSArray *array = ARRAY(@"1", @"2", @"3");
-	__block NSInteger sum = 0;
+    __block NSInteger sum = 0;
     
     TEST_ASSERT([[array ma_map: ^(id obj) { return [obj stringByAppendingString: @".0"]; }] isEqual: 
                  ARRAY(@"1.0", @"2.0", @"3.0")]);
@@ -59,15 +59,15 @@ static void TestArrayMethods(void)
     TEST_ASSERT([[array ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: array]);
     TEST_ASSERT([[array ma_match: ^BOOL (id obj) { return [obj intValue] > 1; }] isEqual: @"2"]);
     TEST_ASSERT([array ma_match: ^BOOL (id obj) { return [obj intValue] < 1; }] == nil);
-	
-	[array ma_do: ^void (id obj) { sum += [obj integerValue]; }];
-	TEST_ASSERT(sum == 6);
+    
+    [array ma_do: ^void (id obj) { sum += [obj integerValue]; }];
+    TEST_ASSERT(sum == 6);
 }
 
 static void TestArrayMacros(void)
 {
     NSArray *array = ARRAY(@"1", @"2", @"3");
-	__block NSInteger sum = 0;
+    __block NSInteger sum = 0;
 
     TEST_ASSERT([MAP(array, [obj stringByAppendingString: @".0"]) isEqual:
                  ARRAY(@"1.0", @"2.0", @"3.0")]);
@@ -83,31 +83,31 @@ static void TestArrayMacros(void)
     
     TEST_ASSERT([MATCH(array, [obj intValue] > 1) isEqual: @"2"]);
     TEST_ASSERT(MATCH(array, [obj intValue] < 1) == nil);
-	
-	DO(array, sum += [obj integerValue]);
-	TEST_ASSERT (sum == 6);
+    
+    DO(array, sum += [obj integerValue]);
+    TEST_ASSERT (sum == 6);
 }
 
 static void TestEach(void)
 {
     NSArray *array1 = ARRAY(@"1", @"2", @"3");
     NSArray *array2 = ARRAY(@"4", @"5", @"6");
-	__block NSInteger sum = 0;
+    __block NSInteger sum = 0;
     
     NSArray *together = MAP(array1, [obj stringByAppendingString: EACH(array2)]);
     TEST_ASSERT([together isEqual: ARRAY(@"14", @"25", @"36")]);
     
     NSArray *filtered = SELECT(array1, [obj intValue] * 2 < [EACH(array2) intValue]);
     TEST_ASSERT([filtered isEqual: ARRAY(@"1", @"2")]);
-	
-	DO (array1, sum += [[obj stringByAppendingString: EACH(array2)] integerValue]);
-	TEST_ASSERT (sum == 75);
+    
+    DO (array1, sum += [[obj stringByAppendingString: EACH(array2)] integerValue]);
+    TEST_ASSERT (sum == 75);
 }
 
 static void TestSetMethods(void)
 {
     NSSet *set = SET(@"1", @"2", @"3");
-	__block NSInteger sum = 0;
+    __block NSInteger sum = 0;
 
     TEST_ASSERT([[set ma_map: ^(id obj) { return [obj stringByAppendingString: @".0"]; }] isEqual: 
                  SET(@"1.0", @"2.0", @"3.0")]);
@@ -116,15 +116,15 @@ static void TestSetMethods(void)
     TEST_ASSERT([[set ma_select: ^BOOL (id obj) { return [obj intValue] < 4; }] isEqual: set]);
     TEST_ASSERT([SET(@"2", @"3") containsObject: [set ma_match: ^BOOL (id obj) { return [obj intValue] > 1; }]]);
     TEST_ASSERT([set ma_match: ^BOOL (id obj) { return [obj intValue] < 1; }] == nil);
-	
-	[set ma_do: ^void (id obj) { sum += [obj integerValue]; }];
-	TEST_ASSERT(sum == 6);
+    
+    [set ma_do: ^void (id obj) { sum += [obj integerValue]; }];
+    TEST_ASSERT(sum == 6);
 }
 
 static void TestSetMacros(void)
 {
     NSSet *set = SET(@"1", @"2", @"3");
-	__block NSInteger sum = 0;
+    __block NSInteger sum = 0;
     
     TEST_ASSERT([MAP(set, [obj stringByAppendingString: @".0"]) isEqual: 
                  SET(@"1.0", @"2.0", @"3.0")]);
@@ -140,9 +140,9 @@ static void TestSetMacros(void)
     
     TEST_ASSERT([SET(@"2", @"3") containsObject: MATCH(set, [obj intValue] > 1)]);
     TEST_ASSERT(MATCH(set, [obj intValue] < 1) == nil);
-	
-	DO(set, sum += [obj integerValue]);
-	TEST_ASSERT (sum == 6);
+    
+    DO(set, sum += [obj integerValue]);
+    TEST_ASSERT (sum == 6);
 }
 
 static void TestReduce(void)
@@ -179,15 +179,15 @@ int main(int argc, char **argv)
         TEST(TestSorting);
         
         NSString *message;
-		
+        
         if(gFailureCount)
-		{
+        {
             message = [NSString stringWithFormat: @"FAILED: %d total assertion failure%s", gFailureCount, gFailureCount > 1 ? "s" : ""];
-		}
+        }
         else
-		{
+        {
             message = @"SUCCESS";
-		}
+        }
         NSLog(@"Tests complete: %@", message);
     });
     return gFailureCount != 0;

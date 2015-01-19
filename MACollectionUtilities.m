@@ -58,8 +58,8 @@
 
 - (void)ma_do: (void (^)(id obj))block
 {
-	for(id obj in self)
-		block(obj);
+    for(id obj in self)
+        block(obj);
 }
 
 @end
@@ -98,8 +98,8 @@
 
 - (void)ma_do: (void (^)(id obj))block
 {
-	for(id obj in self)
-		block(obj);
+    for(id obj in self)
+        block(obj);
 }
 
 @end
