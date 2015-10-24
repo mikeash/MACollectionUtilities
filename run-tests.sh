@@ -1,2 +1,2 @@
-xcodebuild CONFIGURATION_BUILD_DIR='.'
-./MACollectionUtilities
+xcodebuild -scheme MACollectionUtilitiesTests CONFIGURATION_BUILD_DIR='./build'
+./build/MACollectionUtilitiesTests
