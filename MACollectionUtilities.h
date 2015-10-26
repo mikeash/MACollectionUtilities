@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+//! Project version number for MACollectionUtilities.
+FOUNDATION_EXPORT double MACollectionUtilitiesVersionNumber;
+
+//! Project version string for MACollectionUtilities.
+FOUNDATION_EXPORT const unsigned char MACollectionUtilitiesVersionString[];
+
+
 // make sure non-Clang compilers can still compile
 #ifndef __has_feature
 #define __has_feature(x) 0
