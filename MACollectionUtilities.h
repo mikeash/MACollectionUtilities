@@ -15,8 +15,12 @@
 
 // no ARC ? -> declare the ARC attributes we use to be a no-op, so the compiler won't whine
 #if ! __has_feature( objc_arc )
-#define __autoreleasing
-#define __bridge
+    #ifndef __autoreleasing
+        #define __autoreleasing
+    #endif
+    #ifndef __bridge
+        #define __bridge
+    #endif
 #endif
 
 
